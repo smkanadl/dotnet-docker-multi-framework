@@ -1,0 +1,46 @@
+name: Docker
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - version: '24.01.01'
+            type: x86
+            image: windowsservercore-ltsc2022
+            runner: windows-2022
+            build: true
+
+    runs-on: ${{ matrix.runner }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        if: matrix.build == true
+        uses: actions/checkout@v3
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: matrix.build == true
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image ${{ matrix.version }}-${{ matrix.image }}
+        if: matrix.build == true
+        run: |
+          docker build ${{ github.workspace }}/src/multi-sdk/${{ matrix.type }}/${{ matrix.image }}/amd64 --tag ghcr.io/smkanadl/multi-sdk:${{ matrix.version }}-${{ matrix.image }}-${{ matrix.type }} --tag ghcr.io/smkanadl/multi-sdk:${{ matrix.image }}-${{ matrix.type }}
+          docker push ghcr.io/smkanadl/multi-sdk:${{ matrix.image }}-${{ matrix.type }}
+          docker push ghcr.io/smkanadl/multi-sdk:${{ matrix.version }}-${{ matrix.image }}-${{ matrix.type }}
