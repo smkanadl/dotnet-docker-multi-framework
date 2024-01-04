@@ -18,6 +18,11 @@ jobs:
             image: windowsservercore-ltsc2022
             runner: windows-2022
             build: true
+          - version: '24.01.01'
+            type: x64
+            image: windowsservercore-ltsc2022
+            runner: windows-2022
+            build: true
 
     runs-on: ${{ matrix.runner }}
 
