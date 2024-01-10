@@ -13,12 +13,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - version: '24.01.01'
+          - version: '24.01.02'
             type: x86
             image: windowsservercore-ltsc2022
             runner: windows-2022
             build: true
-          - version: '24.01.01'
+          - version: '24.01.02'
             type: x64
             image: windowsservercore-ltsc2022
             runner: windows-2022
